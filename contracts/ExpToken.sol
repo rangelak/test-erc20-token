@@ -6,6 +6,9 @@ contract ExpToken {
 	string public name = 'ExpToken'; 
 	string public symbol = 'EXP';
 
+	// 18 is the most common number of decimal places
+	uint8 public constant decimals = 18;  
+
 	// not a part of the required ERC-20 implementation
 	// serves the purpose to give us the version
 	string public standard = 'ExpToken v1.0';
@@ -13,6 +16,13 @@ contract ExpToken {
 	// totalSupply will be an integer
 	uint256 public totalSupply;
 	
+	// transfer event to be used in the transfer function
+	event Transfer(
+		address indexed _from,
+		address indexed _to,
+		uint256 _value
+	);
+
 	/*******************************************
 		mapping to check someone's balance
 		balanceOf is has dictionary structure
@@ -62,5 +72,8 @@ contract ExpToken {
     	balanceOf[_to] += _value;
 
     	// Emit a transfer event
+    	emit Transfer(msg.sender, _to, _value);
+
+    	return true;
     }
 }

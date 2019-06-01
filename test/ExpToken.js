@@ -49,8 +49,16 @@ contract('ExpToken', function(accounts){
 			return tokenInstance.transfer.call(accounts[1],200000000000);
 		}).then(assert.fail).catch(function(error){
 			assert(error.message.indexOf('revert') >= 0, 'error must cointain \' revert \' .');
+			return tokenInstance.transfer.call(accounts[1], 1, {from: accounts[0]});
+		}).then(function(success){
+			assert.equal(success, true, "transfer happens successfully");
 			return tokenInstance.transfer(accounts[1], 1, {from: accounts[0]});
 		}).then(function(receipt){
+			assert.equal(receipt.logs.length, 1, 'triggers one event');
+      		assert.equal(receipt.logs[0].event, 'Transfer', 'should be the "Transfer" event');
+			assert.equal(receipt.logs[0].args._from, accounts[0], 'logs the account the tokens are transferred from');
+			assert.equal(receipt.logs[0].args._to, accounts[1], 'logs the account the tokens are transferred to');
+			assert.equal(receipt.logs[0].args._value, 1, 'logs the transfer amount');
 			return tokenInstance.balanceOf(accounts[1]);
 		}).then(function(balance_transferred){
 			assert.equal(balance_transferred.toNumber(), 1,'proper amount received by requester.');
